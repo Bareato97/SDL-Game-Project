@@ -1,11 +1,8 @@
 #include "game.hpp"
 #include "texturemanager.hpp"
-#include "player.hpp"
 
-#include "ECS.hpp"
-#include "poscomponent.hpp"
+#include "ECS\components.hpp"
 
-Player *player;
 
 //SDL_Rect Game::camera = {0,0,800, 640};
 
@@ -49,8 +46,6 @@ void Game::init(const char* windowTitle, int xpos, int ypos, int width, int heig
         }
     }
 
-    player = new Player("humantest.png",0,0,16,24);
-
     newPlayer.addComponent<PositionComponent>();
 
 }
@@ -68,13 +63,12 @@ void Game::handleEvents(){
 }
 
 void Game::update(){
-    player->update();
     manager.update();
 }
 
 void Game::render(){
     SDL_RenderClear(renderer);
-    player->render();
+    //render stuff
     SDL_RenderPresent(renderer);
 }
 
