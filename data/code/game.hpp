@@ -1,7 +1,7 @@
 #pragma once
 
-#include "src/include/SDL2/SDL.h"
-#include "src\include\SDL2\SDL_image.h"
+#include "../../src/include/SDL2/SDL.h"
+#include "../../src\include\SDL2\SDL_image.h"
 
 class Game{
 
@@ -18,8 +18,10 @@ public:
     void clean();
 
     bool isRunning();
+    static SDL_Rect camera;
+    static SDL_Renderer *renderer;
+    
 private:
     bool running;
     SDL_Window *window;
-    SDL_Renderer *renderer;
 };

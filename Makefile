@@ -1,3 +1,3 @@
 all:
 all:
-	g++ -Isrc/include -Lsrc/lib -o main main.cpp game.cpp -lmingw32 -lSDL2main -lSDL2 -lSDL2_image
+	g++ -Isrc/include -Lsrc/lib -o main data/code/*.cpp -lmingw32 -lSDL2main -lSDL2 -lSDL2_image

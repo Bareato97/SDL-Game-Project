@@ -1,7 +1,18 @@
 #include "game.hpp"
+#include "texturemanager.hpp"
+#include "player.hpp"
 
-SDL_Texture* playerTexture;
-SDL_Rect srcR, destR;
+#include "ECS.hpp"
+#include "poscomponent.hpp"
+
+Player *player;
+
+//SDL_Rect Game::camera = {0,0,800, 640};
+
+SDL_Renderer* Game::renderer = nullptr;
+
+Manager manager;
+auto& newPlayer(manager.addEntity());
 
 Game::Game(){
 
@@ -38,10 +49,9 @@ void Game::init(const char* windowTitle, int xpos, int ypos, int width, int heig
         }
     }
 
-    SDL_Surface *tempSurface = IMG_Load("humantest.png");
-    playerTexture = SDL_CreateTextureFromSurface(renderer, tempSurface);
-    SDL_FreeSurface(tempSurface);
-    
+    player = new Player("humantest.png",0,0,16,24);
+
+    newPlayer.addComponent<PositionComponent>();
 
 }
 
@@ -58,13 +68,13 @@ void Game::handleEvents(){
 }
 
 void Game::update(){
-    destR.h = 240;
-    destR.w = 160;
+    player->update();
+    manager.update();
 }
 
 void Game::render(){
     SDL_RenderClear(renderer);
-    SDL_RenderCopy(renderer, playerTexture, &destR, &destR);
+    player->render();
     SDL_RenderPresent(renderer);
 }
 
