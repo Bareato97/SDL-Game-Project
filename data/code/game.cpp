@@ -9,7 +9,7 @@
 SDL_Renderer* Game::renderer = nullptr;
 SDL_Event Game::event;
 Manager manager;
-auto& newPlayer(manager.addEntity());
+std::vector<ColliderComponent*> Game::colliders;
 
 Game::Game(){
 
@@ -18,6 +18,15 @@ Game::Game(){
 Game::~Game(){
 
 }
+
+// Initialise group labels, max 32 labels
+enum groupLabels : std::size_t {
+    groupMap,
+    groupPlayer,
+    groupEnemies,
+    groupColliders
+};
+
 
 /*
 Initialises the game
@@ -64,11 +73,13 @@ void Game::handleEvents(){
     }
 }
 
+// What is processed each frame
 void Game::update(){
 
     manager.update();
 }
 
+// Manage rendering to the screen
 void Game::render(){
 
     SDL_RenderClear(renderer); // Clears screen for next frame
