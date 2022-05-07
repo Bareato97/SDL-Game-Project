@@ -2,7 +2,7 @@
 
 #include "game.hpp"
 
-const int FPS = 60;
+const int FPS = 60; // Desired FPS cap
 const int FRAME_DELAY = 1000/FPS;
 
 int main(int argc, char** argv){
@@ -16,7 +16,7 @@ int main(int argc, char** argv){
 
     while(game->isRunning()){
 
-        frameStart = SDL_GetTicks(); // get runtime at start of loop
+        frameStart = SDL_GetTicks(); // get runtime at start of loop, used for getting frame duration
 
 
         // Standard game loop
@@ -31,7 +31,7 @@ int main(int argc, char** argv){
         } // Delay frame if refresh rate is higher than desired fps
     }
 
-    game->clean();
+    game->clean(); // Clears up SDL processes and memory
 
     return 0;
 }

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "string.h"
+#include "string.h" // Required for collision tags
 
 #include "../../../src/include/SDL2/SDL.h"
 
@@ -23,8 +23,7 @@ class TransformComponent : public Component {
         int scale = 1; // TODO change to float and implement type conversion
         
         TransformComponent(){
-            position.x = 0;
-            position.y = 0;
+            position.Zero();
         }
 
         // override to include x and y position
@@ -33,17 +32,17 @@ class TransformComponent : public Component {
             position.y = y;
         }
 
-        // override to include x and y position, as well as a speed
-        TransformComponent(float x, float y, int s){
+        // override to include x and y position, as well as a dimensions
+        TransformComponent(float x, float y, int w, int h){
             position.x = x;
             position.y = y;
-            speed = s;
+            height = h;
+            width = w;
         }
 
         // defaults velocity to 0
         void init() override {
-            velocity.x = 0;
-            velocity.y = 0;
+            velocity.Zero();
         }
 
         // Alters the position each frame relative to the velocity
@@ -69,7 +68,7 @@ class ColliderComponent : public Component {
     int cMaskHeight = 1;
 
     // Constructors defines collision mask size, so it is independent from entity's transform component size
-    ColliderComponent(int width, int height){
+    ColliderComponent(std::string, int width, int height){
 
         cMaskWidth = 1;
         cMaskHeight = 1;

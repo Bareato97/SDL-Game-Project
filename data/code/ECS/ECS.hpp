@@ -18,10 +18,10 @@ inline ComponentID getComponentTypeID(){
 
     static ComponentID lastID = 0;
     return lastID++;
-
 }
 
 template <typename T> inline ComponentID getComponentTypeID() noexcept {
+    
     static ComponentID typeID = getComponentTypeID();
     return typeID;
 }
@@ -54,23 +54,27 @@ class Entity{
 
     public:
         void update(){
-            for(auto& c : componentList) c->update();
-            
+
+            for(auto& c : componentList) c->update(); 
         }
         void draw(){
+
             for(auto& c : componentList) c->draw();
         }
+
         bool isActive() const {return active;}
         void destroy() {active = false;}
 
         // template function to see if an entity has a component
         template <typename T> bool hasComponent() const {
-            return componentBitSet[getComponentTypeID<T>];
+
+            return componentBitSet[getComponentTypeID<T>()];
         }  
 
         // Handles adding components with a variable number of arguments
         template <typename T, typename... TArgs>
         T& addComponent(TArgs&&... mArgs){
+
             T* c(new T(std::forward<TArgs>(mArgs)...));
             c->entity = this;
             std::unique_ptr<Component> uPtr{ c };

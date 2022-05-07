@@ -26,6 +26,12 @@ class Vector2D {
         Vector2D& operator*=(Vector2D& vec);
         Vector2D& operator/=(Vector2D& vec);
 
+        // Allow for vector scaling
+        Vector2D& operator*(const int& i);
+
+        // Zeros vector
+        Vector2D& Zero();
+
         //operator overloading for athrimatic
         // friend allows for access to private functions by another class. in this case it will allow other vector2Ds
         // to access these varibles to overload operators
@@ -34,6 +40,5 @@ class Vector2D {
         friend Vector2D& operator+(Vector2D& v1, const Vector2D& v2);
         friend Vector2D& operator-(Vector2D& v1, const Vector2D& v2);
         friend Vector2D& operator*(Vector2D& v1, const Vector2D& v2);
-        friend Vector2D& operator/(Vector2D& v1, const Vector2D& v2);
-
+        friend Vector2D& operator/(Vector2D& v1, const Vector2D& v2);   
 };

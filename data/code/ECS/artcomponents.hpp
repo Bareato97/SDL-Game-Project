@@ -41,8 +41,8 @@ class SpriteComponent : public Component {
         void update() override {
 
             // Sets draw position to transform position
-            destRect.x = (int)transform->position.x;
-            destRect.y = (int)transform->position.y;
+            destRect.x = static_cast<int>(transform->position.x);
+            destRect.y = static_cast<int>(transform->position.y);
 
             // Sets draw scale to match transform scale
             destRect.w = srcRect.w * transform->scale;
