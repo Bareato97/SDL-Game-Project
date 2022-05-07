@@ -16,28 +16,41 @@ class SpriteComponent : public Component {
     public:
         
         SpriteComponent() = default;
+
         SpriteComponent(const char* path){
+
             setTexture(path);
         }
+
+        // Destroy texture when object is out of scope
         ~SpriteComponent(){
+
             SDL_DestroyTexture(texture);
         }
 
         void init() override {
-            srcRect.x = srcRect.y = 0;
-            srcRect.w = 16;
-            srcRect.h = 24;
 
-            destRect.w = 16;
-            destRect.h = 24;
+            // Defautls to TOP LEFT of source file
+            // TODO implement variable source image location and animations
+            srcRect.x = srcRect.y = 0;
+
+            srcRect.w = transform->width;
+            srcRect.h = transform->height;   
         }
 
         void update() override {
-                destRect.x = (int)transform->position.x;
-                destRect.y = (int)transform->position.y;
+
+            // Sets draw position to transform position
+            destRect.x = (int)transform->position.x;
+            destRect.y = (int)transform->position.y;
+
+            // Sets draw scale to match transform scale
+            destRect.w = srcRect.w * transform->scale;
+            destRect.h = srcRect.h * transform->scale;
         }
 
         void draw() override {
+
                 TextureManager::Draw(texture, srcRect, destRect);
         }
 

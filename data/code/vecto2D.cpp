@@ -1,5 +1,7 @@
 #include "vector2D.hpp"
 
+// Manages the arithmatic and operator overloading for vector2D/position components
+
 Vector2D::Vector2D(){
 
     x = 0.0f;
