@@ -1,13 +1,13 @@
 #include "game.hpp"
 #include "texturemanager.hpp"
-
+#include "vector2D.hpp"
 #include "ECS\components.hpp"
 
 
 //SDL_Rect Game::camera = {0,0,800, 640};
 
 SDL_Renderer* Game::renderer = nullptr;
-
+SDL_Event Game::event;
 Manager manager;
 auto& newPlayer(manager.addEntity());
 
@@ -46,7 +46,7 @@ void Game::init(const char* windowTitle, int xpos, int ypos, int width, int heig
         }
     }
 
-    newPlayer.addComponent<PositionComponent>();
+    newPlayer.addComponent<TransformComponent>();
 
 }
 

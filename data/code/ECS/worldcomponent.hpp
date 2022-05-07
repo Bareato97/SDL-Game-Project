@@ -1,28 +1,39 @@
 #pragma once
 #include "components.hpp"
-
-class PositionComponent : public Component {
+#include "..\vector2D.hpp"
+class TransformComponent : public Component {
     
-    private:
-        
-        int xpos, ypos;
-
     public:
+
+        Vector2D position;
+        Vector2D velocity;
         
-        int x() { return xpos; }
-        int y() { return ypos; }
+        int speed;
+        
+        TransformComponent(){
+            position.x = 0;
+            position.y = 0;
+        }
+
+        TransformComponent(float x, float y){
+            position.x = x;
+            position.y = y;
+        }
+
+        TransformComponent(float x, float y, int s){
+            position.x = x;
+            position.y = y;
+            speed = s;
+        }
 
         void init() override {
-            xpos = 0;
-            ypos = 0;
+            velocity.x = 0;
+            velocity.y = 0;
         }
 
         void update() override {
-            // update position here
-        }
-
-        void setPos(int x, int y) {
-            xpos = x;
-            ypos = y;
+            position.x += velocity.x * speed;
+            position.y += velocity.y * speed;
         }
 };
+

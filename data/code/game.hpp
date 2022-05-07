@@ -20,6 +20,7 @@ public:
     bool isRunning();
     static SDL_Rect camera;
     static SDL_Renderer *renderer;
+    static SDL_Event event;
     
 private:
     bool running;

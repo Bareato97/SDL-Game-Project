@@ -2,13 +2,14 @@
 
 #include "../../../src/include/SDL2/SDL.h"
 
+#include "../texturemanager.hpp"
 #include "components.hpp"
 
 class SpriteComponent : public Component {
     
     private:
         
-        PositionComponent *position;
+        TransformComponent *transform; // holds position, rotation and scale
         SDL_Texture *texture;
         SDL_Rect srcRect, destRect;
 
@@ -17,6 +18,9 @@ class SpriteComponent : public Component {
         SpriteComponent() = default;
         SpriteComponent(const char* path){
             setTexture(path);
+        }
+        ~SpriteComponent(){
+            SDL_DestroyTexture(texture);
         }
 
         void init() override {
@@ -29,8 +33,8 @@ class SpriteComponent : public Component {
         }
 
         void update() override {
-                destRect.x = position->x();
-                destRect.y = position->y();
+                destRect.x = (int)transform->position.x;
+                destRect.y = (int)transform->position.y;
         }
 
         void draw() override {
