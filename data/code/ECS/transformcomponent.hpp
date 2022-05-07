@@ -1,7 +1,5 @@
 #pragma once
 
-#include "../../../src/include/SDL2/SDL.h"
-
 #include "components.hpp"
 #include "..\vector2D.hpp"
 

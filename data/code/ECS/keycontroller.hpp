@@ -7,10 +7,12 @@ class keycontroller : public Component {
 
     public:
         TransformComponent *transform;
+        SpriteComponent *sprite;
 
         void init() override {
 
             transform = &entity->getComponent<TransformComponent>();
+            sprite = &entity->getComponent<SpriteComponent>();
         }
 
         void update() override {
@@ -20,16 +22,16 @@ class keycontroller : public Component {
 
                 switch (Game::event.key.keysym.sym)
                 {
-                case SDLK_w:
+                case SDLK_w: // up
                     transform->velocity.y = -1;
                     break;
-                case SDLK_a:
+                case SDLK_a: // left
                     transform->velocity.x = -1;
                     break;
-                case SDLK_s:
+                case SDLK_s: // down
                     transform->velocity.y = 1;
                     break;
-                case SDLK_d:
+                case SDLK_d: // right
                     transform->velocity.x = 1;
                     break;
                 default:

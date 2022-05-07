@@ -35,9 +35,8 @@ using ComponentArray = std::array<Component*, maxComponents>;
 
 // max amount of render layors
 constexpr std::size_t maxGroups = 32;
-
+// Create group bitset
 using GroupBitset = std::bitset<maxGroups>;
-
 
 class Component{
     
