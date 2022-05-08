@@ -47,10 +47,10 @@ class SpriteComponent : public Component {
         int prevFrameCounter = 0; // holds the previous value held by the frame counter
         int frameBuffer = 0; // holds future value for frame counter
 
-    public:
-        
         int animIndex = 0; // animation index
         int animOffset = 0; // The directional offset, explain above class
+
+    public:
 
         std::map<const char*, Animation> animations; // hashmap holding animations
 

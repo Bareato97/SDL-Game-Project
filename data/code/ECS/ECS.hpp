@@ -9,10 +9,10 @@
 
 class Component;
 class Entity;
-class Manager;
+class EntityManager;
 
+// Component variables
 using ComponentID = std::size_t;
-using Group = std::size_t; // utilised for render layers
 
 // gets the last component id, storing the amount of components
 inline ComponentID getComponentTypeID(){
@@ -33,14 +33,20 @@ constexpr std::size_t maxComponents = 32;
 using ComponentBitSet = std::bitset<maxComponents>;
 using ComponentArray = std::array<Component*, maxComponents>;
 
+
+// Group variables
 // max amount of render layors
+using Group = std::size_t; // utilised for render layers
 constexpr std::size_t maxGroups = 32;
 // Create group bitset
 using GroupBitset = std::bitset<maxGroups>;
 
+// Classes
+
 class Component{
     
     public:
+        // Component contains a reference to its entity
         Entity* entity;
 
         virtual void init(){}
@@ -53,8 +59,10 @@ class Entity{
 
     private:
 
-        Manager& manager;
+        // EntityManager contains a list of entities, and entities can reference the entityEntityManager
+        EntityManager& manager;
 
+        // Checks if entities
         bool active = true;
         std::vector<std::unique_ptr<Component>> componentList;
 
@@ -65,7 +73,7 @@ class Entity{
 
     public:
 
-        Entity(Manager& mManager) : manager(mManager) {}
+        Entity(EntityManager& mEntityManager) : manager(mEntityManager) {}
 
         void update(){
 
@@ -125,15 +133,18 @@ class Entity{
 };
 
 // holds list of all entities
-class Manager{
+class EntityManager{
     
     private:
         
+        // these hold the list of components an entity has, as well as the active groups
         std::vector<std::unique_ptr<Entity>> entityList;
         std::array<std::vector<Entity*>, maxGroups> groups;
 
     public:
         
+        // TODO - re-evaluate update method, as components hold a reference to their entity, might be able to create a list of components and call them, rather than call on entity to them perform component function
+        // Reason being to reduce cache misses, and reduced space as memory is called into L1 cache
         void update(){
 
             for (auto& e : entityList) e->update();
@@ -160,7 +171,7 @@ class Manager{
             // removes entity from manager if it is no longer active
             entityList.erase(std::remove_if(std::begin(entityList), std::end(entityList), [](const std::unique_ptr<Entity> &mEntity) {
 
-                return !mEntity->isActive();
+                return !mEntity->isActive(); // returns true if entity is inactive, as remove_if removes entry if it is true
             }),
             std::end(entityList));
         }
@@ -180,9 +191,9 @@ class Manager{
         // adds an entity to the entity list
         Entity& addEntity(){
 
-            Entity* e = new Entity(*this);
-            std::unique_ptr<Entity> uPtr{ e };
-            entityList.emplace_back(std::move(uPtr));
+            Entity* e = new Entity(*this); // Create temporary entity
+            std::unique_ptr<Entity> uPtr{ e }; // establish unique pointer for the new entity
+            entityList.emplace_back(std::move(uPtr)); // adds the entity to the entitymanager list
             return *e;
         }
 };

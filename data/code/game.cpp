@@ -8,7 +8,7 @@
 
 SDL_Renderer* Game::renderer = nullptr;
 SDL_Event Game::event;
-Manager manager;
+EntityManager manager;
 std::vector<ColliderComponent*> Game::colliders;
 
 Game::Game(){
@@ -37,17 +37,17 @@ fullscreen - if fullscreen is on or not
 */
 void Game::init(const char* windowTitle, int xpos, int ypos, int width, int height, bool fullscreen){
 
-    int flags = 0; // window flag options, such as fullscreen
-    running = false; //by default set to false, only set to true if window is created correctly
+    int windowFlags = 0; // window flag options, such as fullscreen
+    runningState = false; //by default set to false, only set to true if window is created correctly
 
     if(fullscreen){
 
-        flags = SDL_WINDOW_FULLSCREEN;
+        windowFlags = SDL_WINDOW_FULLSCREEN;
     }
 
     if(SDL_Init(SDL_INIT_EVERYTHING) == 0){
 
-        window = SDL_CreateWindow(windowTitle, xpos, ypos, height, height, flags);
+        window = SDL_CreateWindow(windowTitle, xpos, ypos, height, height, windowFlags);
 
         if(window){
 
@@ -55,18 +55,20 @@ void Game::init(const char* windowTitle, int xpos, int ypos, int width, int heig
 
             if(renderer){
 
-                running = true; // true if window, renderer and subsystems are set up correctly
+                runningState = true; // true if window, renderer and subsystems are set up correctly
             }
         }
     }
 }
 
+
+// This is where the game handles inputs as well as window and other computer events
 void Game::handleEvents(){
 
-    SDL_PollEvent(&event);
-    switch (event.type){
-        case SDL_QUIT:
-            running = false;
+    SDL_PollEvent(&event); // Takes in a series of events defined in SDL
+    switch (event.type){ 
+        case SDL_QUIT: // Quits SDL processes
+            runningState = false;
             break;
         default:
             break;
@@ -76,7 +78,7 @@ void Game::handleEvents(){
 // What is processed each frame
 void Game::update(){
 
-    manager.update();
+    manager.update(); // Entity manager cycles through entity's update methods
 }
 
 // Manage rendering to the screen
@@ -97,5 +99,5 @@ void Game::clean(){
 // Used as a check if the game is meant to be running
 bool Game::isRunning(){
     
-    return running;
+    return runningState;
 }

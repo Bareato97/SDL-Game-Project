@@ -6,7 +6,8 @@
 
 #include "components.hpp"
 
-
+// Manages the collision component of an entity
+// Currently only supports box colliders of variable length sides
 class ColliderComponent : public Component {
 
     public:
@@ -26,8 +27,8 @@ class ColliderComponent : public Component {
         // Constructors defines collision mask size, so it is independent from entity's transform component size
         ColliderComponent(std::string, int width, int height){
 
-            cMaskWidth = 1;
-            cMaskHeight = 1;
+            cMaskWidth = width;
+            cMaskHeight = height;
         }
 
         // Adds transform component if the object does not already have one
