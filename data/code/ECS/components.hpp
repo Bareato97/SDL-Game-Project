@@ -6,4 +6,6 @@
 #include "keycontroller.hpp"
 #include "mapcomponent.hpp"
 #include "collidercomponent.hpp"
+#include "entitybuilder.hpp"
+#include "worldchunks.hpp"
 

@@ -4,9 +4,9 @@
 SDL_Texture* TextureManager::LoadTexture(const char* texture){
 
     SDL_Surface *tempSurface = IMG_Load(texture); // Loads image file from file path
-    SDL_Texture *tx = SDL_CreateTextureFromSurface(Game::renderer, tempSurface); 
+    SDL_Texture *tempTex = SDL_CreateTextureFromSurface(Game::renderer, tempSurface); 
     SDL_FreeSurface(tempSurface); 
-    return tx;
+    return tempTex;
 }
 
 // Draw function for taking in a texture, a location on the source texture and a destination location for drawing

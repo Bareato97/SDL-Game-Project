@@ -2,13 +2,16 @@
 #include "texturemanager.hpp"
 #include "vector2D.hpp"
 #include "ECS\components.hpp"
-
-
-//SDL_Rect Game::camera = {0,0,800, 640};
+#include "leveleditor.hpp"
 
 SDL_Renderer* Game::renderer = nullptr;
 SDL_Event Game::event;
 EntityManager manager;
+SDL_Rect Game::camera;
+LevelEditor* levelEditor;
+
+int mouseUp = 1;
+
 std::vector<ColliderComponent*> Game::colliders;
 
 Game::Game(){
@@ -37,9 +40,15 @@ fullscreen - if fullscreen is on or not
 */
 void Game::init(const char* windowTitle, int xpos, int ypos, int width, int height, bool fullscreen){
 
+    levelEditor = new LevelEditor(width, height, 24, &manager);
+
+    auto& tile(manager.addEntity());
+    tile.addComponent<TileComponent>(0, 0, 100, 100, "../art/maps/tilemapdemo.png");
+
     int windowFlags = 0; // window flag options, such as fullscreen
     runningState = false; //by default set to false, only set to true if window is created correctly
-
+    camera.w = width; // set camera dimensions
+    camera.h = height;
     if(fullscreen){
 
         windowFlags = SDL_WINDOW_FULLSCREEN;
@@ -47,12 +56,12 @@ void Game::init(const char* windowTitle, int xpos, int ypos, int width, int heig
 
     if(SDL_Init(SDL_INIT_EVERYTHING) == 0){
 
-        window = SDL_CreateWindow(windowTitle, xpos, ypos, height, height, windowFlags);
+        window = SDL_CreateWindow(windowTitle, xpos, ypos, width, height, windowFlags);
 
         if(window){
 
             renderer = SDL_CreateRenderer(window, -1, 0); // no flags set, might look into options later
-
+            SDL_SetRenderDrawColor(renderer,100,100,100,255);
             if(renderer){
 
                 runningState = true; // true if window, renderer and subsystems are set up correctly
@@ -68,7 +77,17 @@ void Game::handleEvents(){
     SDL_PollEvent(&event); // Takes in a series of events defined in SDL
     switch (event.type){ 
         case SDL_QUIT: // Quits SDL processes
-            runningState = false;
+            std::cout << "Quitting game\n";
+            runningState = false;        
+            break;
+        case SDL_MOUSEBUTTONUP:
+            mouseUp = 1;
+            break;
+        case SDL_MOUSEBUTTONDOWN:
+            if(mouseUp){
+                levelEditor->update();
+            }
+            mouseUp = 0;
             break;
         default:
             break;
@@ -85,7 +104,7 @@ void Game::update(){
 void Game::render(){
 
     SDL_RenderClear(renderer); // Clears screen for next frame
-    //render stuff
+    manager.draw();
     SDL_RenderPresent(renderer); // Presents rendered components
 }
 

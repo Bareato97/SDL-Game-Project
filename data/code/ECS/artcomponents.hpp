@@ -35,8 +35,8 @@ class SpriteComponent : public Component {
     private:
         
         TransformComponent *transform; // holds position, rotation and scale
-        SDL_Texture *texture;
-        SDL_Rect srcRect, destRect;
+        SDL_Texture *texture; 
+        SDL_Rect srcRect, destRect; // source rectangle area, and destination area rectangle
 
         bool animated = false;
         int numFrames = 0;
@@ -52,11 +52,11 @@ class SpriteComponent : public Component {
 
     public:
 
-        std::map<const char*, Animation> animations; // hashmap holding animations
+        std::map<const char*, Animation> animations; // hashmap holding animations and animation keys
 
         SpriteComponent() = default;
 
-        // Constructor that takes in an image path
+        // Constructor that takes in an image path and does not enable animation
         SpriteComponent(const char* path){
 
             setTexture(path);
@@ -64,24 +64,40 @@ class SpriteComponent : public Component {
 
         // Constructor for an animated sprite, if animated by default
         // will only play animation by default if startAnim = true
+        /*
+        path - path to image/spritesheet
+        startanim - if animation should start on load
+        numframes - number of frames for default animation
+        index - animation index in sprite sheet/row of animation
+        speed - image speed in ms, lower = faster
+        */
         SpriteComponent(const char* path, bool startAnim, int numFrames, int index, int speed){
 
             animated = startAnim;
 
+            // Create animation struct, first animation is defaulted to IDLE, can be changed in future
             Animation idle = Animation(numFrames, index, speed);
             animations.emplace("idle", idle);
 
+            // If animated by default, starts playing idle animation from frame 0
             if(startAnim){
-                Play("idle", 0);
+                Play("idle", 0); 
             }
-                 
+            
+            // Sets texture of sprite to image path, refer to texturemanager.cpp
             setTexture(path);
         }
 
         // pauses animation if it is playing, or starts it if it is true
         void setPlayback(bool shouldPlay){
 
+            // Toggles animated state
             animated = shouldPlay;
+
+            // If animation is being paused, frame buffers need to be reset
+            // This covers case where upon resuming it will freeze until the frame buffer catches back up to its previous position
+            // e.g. If an animation that takes 1 second is paused at 0.75 seconds, and then resumed at second 0, it will take 0.75 seconds for it to
+            // catch back up and resume from where it stopped
             if(!animated){
                 frameBuffer = 0;
                 prevFrameCounter = 0;
@@ -90,10 +106,16 @@ class SpriteComponent : public Component {
 
 
         // adds an animation to the sprite component
+        /*
+        name - characters detailing name of animation, this name should be held in the entity for future reference
+        index - row of animation from source image
+
+        */
         void addAnimation(const char* name, int index, int numFrames, int speed){
 
+            // Created new animation struct
             Animation anim = Animation(numFrames, index, speed);
-
+            // Adds animation to animation map
             animations.emplace(name, anim);
 
         }
@@ -144,6 +166,7 @@ class SpriteComponent : public Component {
             destRect.h = srcRect.h * transform->scale;
         }
 
+        // draws from desired location in source file to desired area on screen
         void draw() override {
 
                 TextureManager::Draw(texture, srcRect, destRect);
@@ -159,6 +182,7 @@ class SpriteComponent : public Component {
             animSpeed = animations[animName].animSpeed;
         }
 
+        // Loads image from file into memory
         void setTexture(const char* path){
 
             texture = TextureManager::LoadTexture(path);

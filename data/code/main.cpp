@@ -5,14 +5,17 @@
 const int FPS = 60; // Desired FPS cap
 const int FRAME_DELAY = 1000/FPS;
 
+const int WINDOW_WIDTH = 480;
+const int WINDOW_HEIGHT = 360;
+
 int main(int argc, char** argv){
     
     Game *game = new Game();
 
-    Uint64 frameStart;
-    int frameTime;
+    Uint64 frameStart; // holds the ongoing game time
+    int frameTime; // holds during of frame in ms
 
-    game->init("Game Window", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 600, false);
+    game->init("Game Window", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT, false);
 
     while(game->isRunning()){
 

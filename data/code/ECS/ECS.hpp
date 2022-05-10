@@ -77,7 +77,7 @@ class Entity{
 
         void update(){
 
-            for(auto& c : componentList) c->update(); 
+            for(auto& c : componentList) c->update(); // Cycles through components 
         }
         void draw(){
 
@@ -121,6 +121,7 @@ class Entity{
             componentBitSet[getComponentTypeID<T>()] = true;
 
             c->init();
+            std::cout << "Added component\n";
             return *c;
         }
 
@@ -194,6 +195,7 @@ class EntityManager{
             Entity* e = new Entity(*this); // Create temporary entity
             std::unique_ptr<Entity> uPtr{ e }; // establish unique pointer for the new entity
             entityList.emplace_back(std::move(uPtr)); // adds the entity to the entitymanager list
+            std::cout << "Added entity\n";
             return *e;
         }
 };

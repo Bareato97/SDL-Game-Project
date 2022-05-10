@@ -10,7 +10,9 @@ class keycontroller : public Component {
         SpriteComponent *sprite;
 
         void init() override {
-
+            
+            // TODO - implement component checking, as they are required for the controller/
+            // Currently only used by the player who will, without human error, have these components
             transform = &entity->getComponent<TransformComponent>();
             sprite = &entity->getComponent<SpriteComponent>();
         }

@@ -8,6 +8,8 @@
 
 // Manages the collision component of an entity
 // Currently only supports box colliders of variable length sides
+
+// Ideally, collider box sizes shouldnt be changed per frame
 class ColliderComponent : public Component {
 
     public:
@@ -35,7 +37,7 @@ class ColliderComponent : public Component {
         // If it already has one, simply sets the transform equal to the transform component
         void init() override {
             if(!entity->hasComponent<TransformComponent>()) {
-
+                std::cout << "Does not have transform\n";
                 entity->addComponent<TransformComponent>();
             }
             transform = &entity->getComponent<TransformComponent>();

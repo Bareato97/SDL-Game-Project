@@ -9,31 +9,37 @@ class TileComponent : public Component {
     public:
 
         TransformComponent *transform;
-        SpriteComponent *sprite;
+        SDL_Texture *texture;
+        SDL_Rect srcRect, destRect;
 
         const char* path;
 
+        // Individual tile 
         SDL_Rect tileRect;
         int tileID; // TODO implement texture atlas, ID maps to array
 
         TileComponent() = default;
 
-        TileComponent(int x, int y, int w, int h, int id){
+        TileComponent(int srcX, int srcY, int xpos, int ypos, const char* path){
 
-            tileRect.x = x;
-            tileRect.y = y;
-            tileRect.w = w;
-            tileRect.h = h;
+            texture = TextureManager::LoadTexture(path);
+            srcRect.x = 0;
+            srcRect.y = 0;
+            srcRect.w = 24;
+            srcRect.h = 24;
 
-            tileID = id;
+            destRect.x = 200;            
+            destRect.y = 200;
+            destRect.w = 24;
+            destRect.h = 24;
         }
 
-        void init() override {
+        ~TileComponent(){
 
-            entity->addComponent<TransformComponent>((float)tileRect.x, (float)tileRect.y, tileRect.w, tileRect.h);
-            transform = &entity->getComponent<TransformComponent>();
+            SDL_DestroyTexture(texture);
+        }
 
-            entity-> addComponent<SpriteComponent>(path);
-            sprite = &entity->getComponent<SpriteComponent>();
+        void draw() override {
+            TextureManager::Draw(texture, srcRect, destRect);
         }
 };
