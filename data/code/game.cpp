@@ -42,9 +42,6 @@ void Game::init(const char* windowTitle, int xpos, int ypos, int width, int heig
 
     levelEditor = new LevelEditor(width, height, 24, &manager);
 
-    auto& tile(manager.addEntity());
-    tile.addComponent<TileComponent>(0, 0, 100, 100, "../art/maps/tilemapdemo.png");
-
     int windowFlags = 0; // window flag options, such as fullscreen
     runningState = false; //by default set to false, only set to true if window is created correctly
     camera.w = width; // set camera dimensions

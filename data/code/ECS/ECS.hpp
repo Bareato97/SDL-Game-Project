@@ -73,6 +73,14 @@ class Entity{
 
     public:
 
+        // Initialise group labels, max 32 labels
+        enum groupLabels : std::size_t {
+            groupMap,
+            groupPlayer,
+            groupEnemies,
+            groupColliders
+        };
+
         Entity(EntityManager& mEntityManager) : manager(mEntityManager) {}
 
         void update(){
@@ -121,7 +129,6 @@ class Entity{
             componentBitSet[getComponentTypeID<T>()] = true;
 
             c->init();
-            std::cout << "Added component\n";
             return *c;
         }
 
@@ -195,7 +202,6 @@ class EntityManager{
             Entity* e = new Entity(*this); // Create temporary entity
             std::unique_ptr<Entity> uPtr{ e }; // establish unique pointer for the new entity
             entityList.emplace_back(std::move(uPtr)); // adds the entity to the entitymanager list
-            std::cout << "Added entity\n";
             return *e;
         }
 };

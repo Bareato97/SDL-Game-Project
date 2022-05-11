@@ -1,4 +1,5 @@
 #include "texturemanager.hpp"
+#include <iostream>
 
 // Takes in a path to a image, and loads it to a surface, and from the surface creates a texture
 SDL_Texture* TextureManager::LoadTexture(const char* texture){

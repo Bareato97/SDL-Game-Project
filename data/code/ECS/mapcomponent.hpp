@@ -16,20 +16,23 @@ class TileComponent : public Component {
 
         // Individual tile 
         SDL_Rect tileRect;
-        int tileID; // TODO implement texture atlas, ID maps to array
+
+        int* srcIndex; // source that the tilemap references for getting the source image coordinates
 
         TileComponent() = default;
 
-        TileComponent(int srcX, int srcY, int xpos, int ypos, const char* path){
+        TileComponent(int* indexValue, int xpos, int ypos, const char* path){
+
+            srcIndex = indexValue;
 
             texture = TextureManager::LoadTexture(path);
-            srcRect.x = 0;
-            srcRect.y = 0;
+            srcRect.x = (*srcIndex % 12) * 24;
+            srcRect.y = (*srcIndex / 12) * 24;
             srcRect.w = 24;
             srcRect.h = 24;
 
-            destRect.x = 200;            
-            destRect.y = 200;
+            destRect.x = xpos;            
+            destRect.y = ypos;
             destRect.w = 24;
             destRect.h = 24;
         }
@@ -41,5 +44,10 @@ class TileComponent : public Component {
 
         void draw() override {
             TextureManager::Draw(texture, srcRect, destRect);
+        }
+
+        void update() override {
+            srcRect.x = (*srcIndex % 12) * 24;
+            srcRect.y = (*srcIndex / 12) * 24;
         }
 };

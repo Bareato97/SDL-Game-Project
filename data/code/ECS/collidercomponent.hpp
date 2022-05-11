@@ -37,7 +37,6 @@ class ColliderComponent : public Component {
         // If it already has one, simply sets the transform equal to the transform component
         void init() override {
             if(!entity->hasComponent<TransformComponent>()) {
-                std::cout << "Does not have transform\n";
                 entity->addComponent<TransformComponent>();
             }
             transform = &entity->getComponent<TransformComponent>();

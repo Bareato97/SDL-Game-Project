@@ -3,6 +3,7 @@
 #include "vector"
 #include "string"
 #include "utility"
+#include "map"
 
 #include "ECS/components.hpp"
 
@@ -17,7 +18,7 @@ private:
 
     bool canCheck = true;
 
-    
+    std::map<int,int> tileIndex; 
 
 public:
 
@@ -29,12 +30,14 @@ public:
 
     int CheckTiles(int mX, int mY);
 
-    void AddTile(int xIndex, int yIndex, int tileValue);
+    void AddTile(int xIndex, int yIndex, int *tileValue);
 
     void SaveLevel();
 
     void LoadLevel();
 
     void update();
+
+    void InitialiseIndexMap();
 
 };
