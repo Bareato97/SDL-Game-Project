@@ -30,7 +30,7 @@ LevelEditor::LevelEditor(int mWidth, int mHeight, int tS){
         }
     }
 
-    
+    combinedTexture = SDL_CreateTexture(Game::renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, xTiles*tileSize*tileScale, yTiles*tileSize*tileScale);
 };
 
 LevelEditor::~LevelEditor(){
@@ -170,11 +170,18 @@ void LevelEditor::UpdateNearbyTiles(int xIndex, int yIndex){
 void LevelEditor::updateTexture(){
 
 
-    // Create texture size of map
+    // removes texture from memory
+    if(combinedTexture != NULL){
+        SDL_DestroyTexture(combinedTexture);
+    }
+    
+    // creates texture which can be drawn to
     combinedTexture = SDL_CreateTexture(Game::renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, xTiles*tileSize*tileScale, yTiles*tileSize*tileScale);
-    tileMapTexture = TextureManager::LoadTexture(tileSetPaths);
-
+    // Set texture as render target
     SDL_SetRenderTarget(Game::renderer, combinedTexture);
+    // clears the renderer of previous filler
+    SDL_RenderClear(Game::renderer); 
+    tileMapTexture = TextureManager::LoadTexture(tileSetPaths);
     for (int i = 0; i < xTiles; i++)
     {
         for(int j = 0; j < yTiles; j++)
@@ -199,7 +206,7 @@ void LevelEditor::updateTexture(){
     }
     
     SDL_SetRenderTarget(Game::renderer, NULL);
-    
+    SDL_DestroyTexture(tileMapTexture);
 }
 
 /*
