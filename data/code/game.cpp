@@ -10,7 +10,6 @@ EntityManager manager;
 SDL_Rect Game::camera;
 LevelEditor* levelEditor;
 
-int mouseUp = 1;
 
 std::vector<ColliderComponent*> Game::colliders;
 
@@ -22,13 +21,7 @@ Game::~Game(){
 
 }
 
-// Initialise group labels, max 32 labels
-enum groupLabels : std::size_t {
-    groupMap,
-    groupPlayer,
-    groupEnemies,
-    groupColliders
-};
+
 
 
 /*
@@ -40,7 +33,7 @@ fullscreen - if fullscreen is on or not
 */
 void Game::init(const char* windowTitle, int xpos, int ypos, int width, int height, bool fullscreen){
 
-    levelEditor = new LevelEditor(width, height, 24, &manager);
+    levelEditor = new LevelEditor(width, height, 24);
 
     int windowFlags = 0; // window flag options, such as fullscreen
     runningState = false; //by default set to false, only set to true if window is created correctly
@@ -58,7 +51,6 @@ void Game::init(const char* windowTitle, int xpos, int ypos, int width, int heig
         if(window){
 
             renderer = SDL_CreateRenderer(window, -1, 0); // no flags set, might look into options later
-            SDL_SetRenderDrawColor(renderer,100,100,100,255);
             if(renderer){
 
                 runningState = true; // true if window, renderer and subsystems are set up correctly
@@ -70,21 +62,30 @@ void Game::init(const char* windowTitle, int xpos, int ypos, int width, int heig
 
 // This is where the game handles inputs as well as window and other computer events
 void Game::handleEvents(){
-
+    Uint32 buttons;
+    int mouseX, mouseY;
+    SDL_PumpEvents();
     SDL_PollEvent(&event); // Takes in a series of events defined in SDL
     switch (event.type){ 
         case SDL_QUIT: // Quits SDL processes
+
             std::cout << "Quitting game\n";
             runningState = false;        
             break;
-        case SDL_MOUSEBUTTONUP:
-            mouseUp = 1;
-            break;
         case SDL_MOUSEBUTTONDOWN:
-            if(mouseUp){
-                levelEditor->update();
-            }
-            mouseUp = 0;
+            buttons = SDL_GetMouseState(&mouseX, &mouseY);
+
+            levelEditor->update(mouseX, mouseY, buttons);
+            SDL_FlushEvent(SDL_MOUSEBUTTONDOWN);
+            break;
+        case SDL_MOUSEMOTION:
+            
+            buttons = SDL_GetMouseState(&mouseX, &mouseY);
+
+            levelEditor->update(mouseX, mouseY, buttons);
+
+            // flushes all mouse motion events until called again, prevent memory leak from holding down mouse keys
+            SDL_FlushEvent(SDL_MOUSEMOTION);
             break;
         default:
             break;
@@ -101,6 +102,7 @@ void Game::update(){
 void Game::render(){
 
     SDL_RenderClear(renderer); // Clears screen for next frame
+    levelEditor->DrawLevel();
     manager.draw();
     SDL_RenderPresent(renderer); // Presents rendered components
 }

@@ -4,15 +4,18 @@
 
 
 
-LevelEditor::LevelEditor(int mWidth, int mHeight, int tS, EntityManager* manager){
+LevelEditor::LevelEditor(int mWidth, int mHeight, int tS){
 
     InitialiseIndexMap();
 
-    EntityList = manager;
+    tileSetPaths = "data/art/maps/tilemapdemo.png";
+
+    
 
     mapWidth = mWidth;
     mapHeight = mHeight;
     tileSize = tS;
+    tileScale = 1;
 
     yTiles = mapHeight/tileSize;
     xTiles = mapWidth/tileSize;
@@ -26,6 +29,8 @@ LevelEditor::LevelEditor(int mWidth, int mHeight, int tS, EntityManager* manager
             tileMap[i][j] = 0;
         }
     }
+
+    
 };
 
 LevelEditor::~LevelEditor(){
@@ -38,20 +43,49 @@ LevelEditor::~LevelEditor(){
     delete tileMap;*/
 };
 
-void LevelEditor::update(){
+void LevelEditor::update(int mouseX, int mouseY, Uint32 button){
 
-    if(canCheck){
+    if(canCheck == true){
+
         canCheck = false;
-        int mouseX, mouseY;
-        Uint32 buttons;
-
-        buttons = SDL_GetMouseState(&mouseX, &mouseY);
         int mouseIndexX = mouseX / tileSize;
         int mouseIndexY = mouseY / tileSize;
-        tileMap[mouseIndexY][mouseIndexX] = tileIndex[CheckTiles(mouseIndexX, mouseIndexY)];
-        AddTile(mouseIndexX, mouseIndexY, &tileMap[mouseIndexY][mouseIndexX]);
-        canCheck = true;   
-    }                   
+        sameTile = ((mouseIndexX == prevMouseX) && (mouseIndexY == prevMouseY));
+
+        switch (button)
+        {
+        case 1:
+            if(sameTile == false || (prevButton != button)){ // Prevent repeated calls on same tile, allow for hold down drawing
+                if(tileMap[mouseIndexY][mouseIndexX] == 0){
+
+                    tileMap[mouseIndexY][mouseIndexX] = tileIndex[CheckTiles(mouseIndexX, mouseIndexY)];
+                    UpdateNearbyTiles(mouseIndexX, mouseIndexY);
+                    updateTexture();
+                    prevMouseX = mouseIndexX;
+                    prevMouseY = mouseIndexY;
+                    prevButton = button;
+                }
+            }
+            break;
+        case 4:
+            if(sameTile == false || (prevButton != button)){ // Prevent repeated calls on same tile, allow for hold down drawing
+            if(tileMap[mouseIndexY][mouseIndexX] != 0){
+
+                    RemoveTile(mouseIndexX, mouseIndexY);
+                    UpdateNearbyTiles(mouseIndexX, mouseIndexY);
+                    updateTexture();
+                    prevMouseX = mouseIndexX;
+                    prevMouseY = mouseIndexY;
+                    prevButton = button;
+             }
+            }
+            break;
+        default:
+            break;
+        }     
+
+        canCheck = true;        
+    }  
 }
 
 int LevelEditor::CheckTiles(int mX, int mY){
@@ -61,7 +95,7 @@ int LevelEditor::CheckTiles(int mX, int mY){
     int mouseY = mY;
 
     int tileValue = 0u;
-
+    
     for(int y = -1; y <= 1; y++) {
 
         for(int x = -1; x <= 1; x++) {
@@ -69,9 +103,9 @@ int LevelEditor::CheckTiles(int mX, int mY){
             if( !(x == 0 && y == 0)) { 
 
                 tileValue = tileValue >> 1; // shift right
-                if((mouseX + x >= 0) && ((mouseX + x) <= xTiles) &&
-                   (mouseY + y >= 0) && ((mouseY + y) <= yTiles)) {
-                    if(tileMap[mouseY + y][mouseX + x] != 0){
+                if((mouseX + x >= 0) && ((mouseX + x) < xTiles) &&
+                   (mouseY + y >= 0) && ((mouseY + y) < yTiles)) {
+                    if(tileMap[mouseY + y][mouseX + x] != 0){                      
                         if(x == -1 && y == -1){
 
                             if(tileMap[mouseY-1][mouseX] !=0 && tileMap[mouseY][mouseX -1] !=0){
@@ -107,23 +141,23 @@ int LevelEditor::CheckTiles(int mX, int mY){
     return tileValue;
 };
 
-void LevelEditor::AddTile(int xIndex, int yIndex, int* tileValue){
-
+void LevelEditor::RemoveTile(int xIndex, int yIndex){
     
-    int destX = xIndex * tileSize;
-    int destY = yIndex * tileSize;
+    tileMap[yIndex][xIndex] = 0;
+    UpdateNearbyTiles(xIndex, yIndex);
+};
 
-    auto& tile(EntityList->addEntity());
-    tile.addComponent<TileComponent>(tileValue, destX, destY, "data/art/maps/tilemapdemo.png");
-    //tile.addComponent<ColliderComponent>("tile",tileSize, tileSize);
-    
+
+// Runs a check on the tiles surrounding the coordinates provided
+void LevelEditor::UpdateNearbyTiles(int xIndex, int yIndex){
+
     for(int x = -1; x <= 1; x++) {
 
         for(int y = -1; y <= 1; y++) {
 
             if((x != 0 || y != 0) &&
-            (xIndex + x != -1) && (xIndex + x != mapWidth / tileSize) &&
-            (yIndex + y != -1) && (yIndex + y != mapHeight / tileSize)) {
+                ((xIndex + x >= 0) && ((xIndex + x) < xTiles) &&
+                 (yIndex + y >= 0) && ((yIndex + y) < yTiles))) {
                 
                 if(tileMap[yIndex + y][xIndex + x] != 0){
                     tileMap[yIndex + y][xIndex + x] = tileIndex[CheckTiles(xIndex + x, yIndex + y)];
@@ -131,10 +165,60 @@ void LevelEditor::AddTile(int xIndex, int yIndex, int* tileValue){
             }
         }
     }
-    
 };
 
-//void LevelEditor::UpdateTile(int xIndex, int yIndex){};
+void LevelEditor::updateTexture(){
+
+
+    // Create texture size of map
+    combinedTexture = SDL_CreateTexture(Game::renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, xTiles*tileSize*tileScale, yTiles*tileSize*tileScale);
+    tileMapTexture = TextureManager::LoadTexture(tileSetPaths);
+
+    SDL_SetRenderTarget(Game::renderer, combinedTexture);
+    for (int i = 0; i < xTiles; i++)
+    {
+        for(int j = 0; j < yTiles; j++)
+        {
+            if(tileMap[j][i] != 0){
+
+                srcRect.w = srcRect.h = tileSize;
+
+                // Get source image position from mapped index
+                int x = (tileMap[j][i] % 12) * tileSize;
+                int y = (tileMap[j][i] / 12) * tileSize;
+                srcRect.x = x;
+                srcRect.y = y;
+
+                desRect.h = desRect.w = (tileSize * tileScale);
+                desRect.x = i*tileSize*tileScale;
+                desRect.y = j*tileSize*tileScale;
+
+                TextureManager::Draw(tileMapTexture, srcRect, desRect);
+            }
+        }
+    }
+    
+    SDL_SetRenderTarget(Game::renderer, NULL);
+    
+}
+
+/*
+
+Currently this is very inefficient for a large static texture.
+Need to look into texture targetting, so tilemap can be combined into a single texture to allow for hardware acceleration
+Repeated cpu -> gpu calls dont provide much performance options ie for loop > draw call > for loop > draw call > ...
+
+*/
+void LevelEditor::DrawLevel(){
+    srcRect.x = srcRect.y = 0;
+    srcRect.w = xTiles * tileSize;
+    srcRect.h = yTiles * tileSize;
+
+    desRect.x = desRect.y = 0;
+    desRect.w = xTiles * tileSize * tileScale;
+    desRect.h = yTiles * tileSize * tileScale;
+    TextureManager::Draw(combinedTexture, srcRect, desRect);
+}
 
 void LevelEditor::SaveLevel(){};
 

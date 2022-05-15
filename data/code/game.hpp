@@ -25,10 +25,10 @@ public:
     static SDL_Rect camera;
     static SDL_Renderer *renderer;
     static SDL_Event event;
-
+    SDL_Window *window;
     static std::vector<ColliderComponent*> colliders;
     
 private:
     bool runningState;
-    SDL_Window *window;
+    
 };

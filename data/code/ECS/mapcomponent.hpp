@@ -49,5 +49,12 @@ class TileComponent : public Component {
         void update() override {
             srcRect.x = (*srcIndex % 12) * 24;
             srcRect.y = (*srcIndex / 12) * 24;
+
+            if(srcIndex == 0){entity->destroy();}
+            
+        }
+
+        void refreshTile() {
+            
         }
 };

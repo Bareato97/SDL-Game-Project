@@ -92,6 +92,10 @@ class Entity{
             for(auto& c : componentList) c->draw();
         }
 
+        ~Entity(){
+            std::cout << "entity destroyed" << std::endl;
+        }
+
         bool isActive() const {return active;}
         void destroy() {active = false;}
 
