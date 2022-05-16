@@ -18,14 +18,16 @@ private:
     SDL_Rect srcRect;
     SDL_Rect desRect;
 
-    int** tileMap; // 2D array to store tile values
+    std::pair<int,int>** tileMap; // 2D array to store tile values, Tiletype, tileValue
     int mapWidth, mapHeight; // map width and height in pixels
     int mapIndex; // index of the map, eg town might be index 1, forest 2 etc
     int xTiles, yTiles; // number of x and y in tiles
-    int tileSize, tileScale; // size of the tiles, scale of tiles on screen
+    int tileSize; // size of the tiles
+    float tileScale; //  scale of tiles on screen
     int prevMouseX, prevMouseY; // location of the mouseX and mouseY on previous frame
     Uint32 prevButton = 4; // defaults to right click
     int layerLevel;
+    int tileType = 1; // used for verifying different tile types, for now defaults to 1 for grass tiles, will convert to an enum at a later date
 
     // enum entityList TODO: implement system for storing entities to be used
 
@@ -38,17 +40,17 @@ private:
 
 public:
     
-    LevelEditor(int mWidth, int mHeight, int tS);
+    LevelEditor(int mWidth, int mHeight, int tSize, float scale);
 
     ~LevelEditor();
 
-    int CheckTiles(int mX, int mY);
+    int CheckTiles(int mX, int mY, int tType);
 
     void AddTile(int xIndex, int yIndex, int *tileValue);
 
     void RemoveTile(int xIndex, int yIndex);
 
-    void UpdateNearbyTiles(int xIndex, int yIndex);
+    void UpdateNearbyTiles(int xIndex, int yIndex, int tType);
 
     void updateTexture();
 

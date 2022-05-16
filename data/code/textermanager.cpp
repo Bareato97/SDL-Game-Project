@@ -3,7 +3,7 @@
 
 // Takes in a path to a image, and loads it to a surface, and from the surface creates a texture
 SDL_Texture* TextureManager::LoadTexture(const char* texture){
-
+    
     SDL_Surface *tempSurface = IMG_Load(texture); // Loads image file from file path
     SDL_Texture *tempTex = SDL_CreateTextureFromSurface(Game::renderer, tempSurface); 
     SDL_FreeSurface(tempSurface); 

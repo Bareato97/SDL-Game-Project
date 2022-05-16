@@ -33,7 +33,12 @@ fullscreen - if fullscreen is on or not
 */
 void Game::init(const char* windowTitle, int xpos, int ypos, int width, int height, bool fullscreen){
 
-    levelEditor = new LevelEditor(width, height, 24);
+    levelEditor = new LevelEditor(width, height, 24, 3);
+
+    camera.x = 50;
+    camera.y = 0;
+    camera.h = height;
+    camera.w = width;
 
     int windowFlags = 0; // window flag options, such as fullscreen
     runningState = false; //by default set to false, only set to true if window is created correctly
@@ -75,14 +80,14 @@ void Game::handleEvents(){
         case SDL_MOUSEBUTTONDOWN:
             buttons = SDL_GetMouseState(&mouseX, &mouseY);
 
-            levelEditor->update(mouseX, mouseY, buttons);
+            levelEditor->update(mouseX+camera.x, mouseY+camera.y, buttons);
             SDL_FlushEvent(SDL_MOUSEBUTTONDOWN);
             break;
         case SDL_MOUSEMOTION:
             
             buttons = SDL_GetMouseState(&mouseX, &mouseY);
 
-            levelEditor->update(mouseX, mouseY, buttons);
+            levelEditor->update(mouseX+camera.x, mouseY+camera.y, buttons);
 
             // flushes all mouse motion events until called again, prevent memory leak from holding down mouse keys
             SDL_FlushEvent(SDL_MOUSEMOTION);

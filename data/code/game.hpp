@@ -28,6 +28,7 @@ public:
     SDL_Window *window;
     static std::vector<ColliderComponent*> colliders;
     
+    
 private:
     bool runningState;
     

@@ -21,7 +21,6 @@ int main(int argc, char** argv){
 
         frameStart = SDL_GetTicks(); // get runtime at start of loop, used for getting frame duration
 
-
         // Standard game loop
         game->handleEvents(); // handle inputs
         game->update(); // update object behavior, like steps in other engines
